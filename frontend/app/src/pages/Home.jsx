@@ -1,6 +1,8 @@
-import React from 'react'
+import { useAuthStore } from '../store/useAuthStore'
 
 const Home = () => {
+  const {authUser}=useAuthStore();
+  console.log(authUser)
   return (
     <div className=' container mx-auto'>
         <div className=' max-w-full h-screen p-4'>

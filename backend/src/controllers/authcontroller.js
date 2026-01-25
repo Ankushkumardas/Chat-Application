@@ -25,7 +25,7 @@ export const signup = async (req, res) => {
     const newuser = await User.create({ email, password: hashpass, name });
     if (newuser) {
       const token = generateToken(newuser, res);
-      const link = `http://localhost:3000/verify-email?token=${token}`;
+      const link = `http://localhost:5173/verify-email?token=${token}`;
       await sendmail({
         to: email,
         subject: "Registration email verification link",

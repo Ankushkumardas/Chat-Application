@@ -7,7 +7,8 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
-
+import {Toaster} from 'react-hot-toast';
+import VerifyEmail from "./pages/VerifyEmail";
 const App = () => {
   const { authUser, checkAuth, isCheckauth } = useAuthStore();
   useEffect(() => {
@@ -31,11 +32,10 @@ const App = () => {
           <Route
             path="/"
             element={
-              <PrivateRoute>
                 <Home />
-              </PrivateRoute>
             }
           />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route
             path="/signup"
             element={!authUser ? <SIgnup /> : <Navigate to={"/"} />}
@@ -66,6 +66,7 @@ const App = () => {
             element={<Navigate to={authUser ? "/" : "/login"} />}
           />
         </Routes>
+              <Toaster />
       </div>
     </div>
   );
