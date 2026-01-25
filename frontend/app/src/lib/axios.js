@@ -23,7 +23,6 @@ axiosInstance.interceptors.request.use(
 //RESPONCE
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log(response, "Refresh token is done now ");
     return response;
   },
   async (error) => {
