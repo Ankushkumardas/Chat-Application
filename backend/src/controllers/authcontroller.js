@@ -114,7 +114,6 @@ export const logout = async (req, res) => {
     await User.findByIdAndUpdate(payload.id, {
       refreshToken: null,
     });
-
   }
 
   res.clearCookie("refreshToken", {
@@ -207,5 +206,14 @@ export const verifyemail = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Internal server error", success: false });
+  }
+};
+
+export const checkauth = async (req, res) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log("Error in checkAuth controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
