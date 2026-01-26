@@ -7,7 +7,9 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
-import {Toaster} from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
+import Message from "./messages/Message";
+
 import VerifyEmail from "./pages/VerifyEmail";
 const App = () => {
   const { authUser, checkAuth, isCheckauth } = useAuthStore();
@@ -29,12 +31,7 @@ const App = () => {
       <div className="max-w-full">
         <Navbar />
         <Routes>
-          <Route
-            path="/"
-            element={
-                <Home />
-            }
-          />
+          <Route path="/" element={<Home />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route
             path="/signup"
@@ -60,13 +57,20 @@ const App = () => {
               </PrivateRoute>
             }
           />
-          {/* Catch-all route for non-existent pages */}
+          <Route
+            path="/message"
+            element={
+              <PrivateRoute>
+                <Message />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="*"
             element={<Navigate to={authUser ? "/" : "/login"} />}
           />
         </Routes>
-              <Toaster />
+        <Toaster />
       </div>
     </div>
   );

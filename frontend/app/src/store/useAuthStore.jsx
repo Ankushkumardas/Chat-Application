@@ -79,7 +79,6 @@ export const useAuthStore = create((set, get) => ({
   logout: async () => {
     try {
       const res = await axiosInstance.post("/auth/logout");
-      // clear local storage and auth state regardless of backend response
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       set({ authUser: null });
@@ -88,11 +87,30 @@ export const useAuthStore = create((set, get) => ({
       }
       return res.data;
     } catch (error) {
-      // still clear local state if request fails
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       set({ authUser: null });
       throw error;
+    }
+  },
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await axiosInstance.put("/user/update-profile", data);
+      const resData = res?.data;
+      if (resData?.user) {
+        localStorage.setItem("user", JSON.stringify(resData.user));
+        set({ authUser: resData.user });
+      }
+      toast.success(resData?.message || "Profile updated");
+      return resData;
+    } catch (error) {
+      console.log("error while updating users data ", error);
+      const msg = error?.response?.data?.message || "Error updating user data";
+      toast.error(msg);
+      throw error;
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 }));
