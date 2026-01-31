@@ -5,7 +5,7 @@ import { axiosInstance } from "../lib/axios";
 export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
-  selectedUser: null, //the person we will select to chat with from teh sidebar of people
+  selectedUser: null,
   isUserLoading: false,
   isMessageLoading: false,
   getUsers: async () => {
@@ -17,7 +17,7 @@ export const useChatStore = create((set, get) => ({
       toast.error("Error while getting users");
       console.log(error);
     } finally {
-      toast.success("All User fetched ")
+      toast.success("All User fetched ");
       set({ isUserLoading: false });
     }
   },
@@ -26,7 +26,8 @@ export const useChatStore = create((set, get) => ({
     try {
       const { data } = await axiosInstance.get(`/message/${userid}`);
       console.log(data);
-      set({ messages: data });
+      // backend returns { messages: [...], success: true }
+      set({ messages: data.messages ?? [] });
     } catch (error) {
       console.log(error);
     } finally {
@@ -34,4 +35,27 @@ export const useChatStore = create((set, get) => ({
     }
   },
   setSelectedUser: (user) => set({ selectedUser: user }),
+  sendMessage: async (messageData) => {
+    console.log("sendMessage payload:", messageData);
+    const { selectedUser, messages } = get();
+    if (!selectedUser) {
+      toast.error("No recipient selected");
+      return;
+    }
+    // backend expects { text, image }
+    const body = typeof messageData === "string" ? { text: messageData } : { text: messageData.message ?? messageData.text };
+    try {
+      const res = await axiosInstance.post(`/message/send/${selectedUser._id}`, body);
+      console.log(res.data, "message response");
+      if (res.data?.message) {
+        set({ messages: [...messages, res.data.message] });
+        toast.success("Message sent successfully");
+      } else {
+        toast.error("Failed to send message");
+      }
+    } catch (error) {
+      console.log("sendMessage error:", error);
+      toast.error("Error sending message");
+    }
+  },
 }));

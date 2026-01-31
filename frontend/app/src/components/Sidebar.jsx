@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 const COLOR_CLASSES = [
   "bg-red-500",
@@ -29,10 +30,11 @@ const Sidebar = () => {
     setSelectedUser,
     isUserLoading,
   } = useChatStore();
-
+  const { onlineUsers } = useAuthStore();
+  console.log(onlineUsers);
   const userList = users?.filteredusers ?? users ?? [];
   console.log(selectedUser);
-  const onlineusers = [];
+
   useEffect(() => {
     getUsers();
   }, [getUsers]);
@@ -102,12 +104,11 @@ const Sidebar = () => {
                   {suffix}
                 </div>
 
-                {onlineusers.includes(data._id) ? (
-                  <div>
-                    <p>online</p>
-                  </div>
-                ) : (
-                  <p>oofline</p>
+                {onlineUsers.includes(data._id) && (
+                  <span
+                    className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white"
+                    aria-hidden="true"
+                  />
                 )}
               </div>
 

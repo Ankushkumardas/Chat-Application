@@ -9,7 +9,7 @@ const Message = () => {
   return (
     <div className=" h-screen w-full">
       <div className=" flex items-center justify-center pt-20 px-4">
-        <div className="rounded-lg shadow w-full max-w-8xl ">
+        <div className="rounded-lg shadow-sm w-full max-w-8xl ">
           <div className="flex h-full rounded-md overflow-hidden">
             <Sidebar />
             {!selectedUser ? <NoChatSelected /> : <ChatContainer />}
