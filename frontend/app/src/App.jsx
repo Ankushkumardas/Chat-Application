@@ -12,11 +12,10 @@ import Message from "./messages/Message";
 
 import VerifyEmail from "./pages/VerifyEmail";
 const App = () => {
-  const { authUser, checkAuth, isCheckauth } = useAuthStore();
+  const { authUser, checkAuth, isCheckauth, onlineUsers } = useAuthStore();
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-
   if (isCheckauth && !authUser) {
     return <div>Loading</div>;
   }

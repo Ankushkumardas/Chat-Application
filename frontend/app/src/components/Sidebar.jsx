@@ -30,10 +30,10 @@ const Sidebar = () => {
     setSelectedUser,
     isUserLoading,
   } = useChatStore();
+
   const { onlineUsers } = useAuthStore();
   console.log(onlineUsers);
   const userList = users?.filteredusers ?? users ?? [];
-  console.log(selectedUser);
 
   useEffect(() => {
     getUsers();
@@ -73,7 +73,13 @@ const Sidebar = () => {
   return (
     <div className="h-full overflow-y-auto min-w-sm p-3">
       <div className="text-sm font-semibold text-gray-700 mb-3">Chats</div>
-
+    <div>
+      {/* {onlineuserstoshow.map((data)=>{
+        return <div >
+          <p>{data.name}</p>
+        </div>
+      })} */}
+    </div>
       {userList.length === 0 && (
         <div className="text-sm text-gray-500">No users found</div>
       )}

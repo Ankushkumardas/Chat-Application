@@ -16,8 +16,8 @@ const Login = () => {
       await login(form);
       toast.success("Login successful");
       setTimeout(() => {
-        navigate("/profile");
-      }, 1500);
+        navigate("/message");
+      }, 700);
     } catch (err) {
       console.log(err);
     }

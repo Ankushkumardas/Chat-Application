@@ -37,11 +37,10 @@ const Settings = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-6">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Update Accounts Data
-        </h2>
+    <div className="min-h-screen bg-white text-black">
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="w-full max-w-xl mx-auto rounded-2xl bg-white p-6 border border-gray-100 shadow-lg">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Update Account</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
@@ -115,7 +114,7 @@ const Settings = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={() => {
@@ -137,13 +136,14 @@ const Settings = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium rounded-md bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-4 py-2 text-sm font-medium rounded-md bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               Save Changes
             </button>
           </div>
         </form>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

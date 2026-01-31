@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
+
+export const BASE_URL = "http://localhost:3000";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -9,8 +12,10 @@ export const useAuthStore = create((set, get) => ({
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
-  onlineUsers:[],
+  onlineUsers: [],
+  socket: null,
   checkAuth: async () => {
+    //same when ever teh app refreshed we connect to socket server and if authenticaetd tahn only get connected to socket
     const token = localStorage.getItem("token");
     if (!token) {
       set({ authUser: null, isCheckauth: false });
@@ -18,8 +23,9 @@ export const useAuthStore = create((set, get) => ({
     }
     try {
       const res = await axiosInstance.get("/auth/check");
-      // backend returns decoded token / user info in res.data
+      // console.log(res.data)
       set({ authUser: res.data });
+      get().connectSocket();
     } catch (error) {
       console.log(error);
       set({ authUser: null });
@@ -34,7 +40,9 @@ export const useAuthStore = create((set, get) => ({
       toast.success(
         "Account created successfully. Check your email to verify."
       );
+      get().connectSocket();
       return res.data;
+      //same while we signup connect to socket server when we are online
     } catch (error) {
       const msg = error?.response?.data?.message || "Signup failed";
       toast.error(msg);
@@ -55,6 +63,8 @@ export const useAuthStore = create((set, get) => ({
       if (user) {
         localStorage.setItem("user", JSON.stringify(user));
         set({ authUser: user });
+        //if login successfull tahn connect to socket server
+        get().connectSocket();
       }
       return res.data;
     } catch (error) {
@@ -86,6 +96,8 @@ export const useAuthStore = create((set, get) => ({
       if (res?.data?.success) {
         toast.success("Logout successful");
       }
+      //we call this when ever we disconnect socket to disconnect ffrom teh socket server to
+      get().disconnectSocket();
       return res.data;
     } catch (error) {
       localStorage.removeItem("token");
@@ -113,5 +125,27 @@ export const useAuthStore = create((set, get) => ({
     } finally {
       set({ isUpdatingProfile: false });
     }
+  },
+  //for socket
+  connectSocket: () => {
+    const { authUser } = get();
+    //if there is no authenticated user or there is a connection before than do not craete a duplicate connection
+    if (!authUser || get().socket?.connected) return;
+    const socket = io(BASE_URL,{
+      query:{
+        userId:authUser.id,
+      }
+    });
+    socket.connect();
+    set({ socket: socket });
+    //listen and get onlien users
+    socket.on("getOnlineUsers",(userId)=>{
+      set({onlineUsers:userId})
+    })
+  },
+  disconnectSocket: () => {
+    //if you are connected then only disconnect
+    if (get().socket?.connected) get().socket?.disconnect();
+    set({ socket: null });
   },
 }));

@@ -13,11 +13,10 @@ const Profile = () => {
     );
   }
   const users = Array.isArray(res) ? res : [res];
-  console.log(users);
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      {users.map((user, idx) => {
-        // Destructure and filter out sensitive fields
+    <div className="min-h-screen bg-white text-black">
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        {users.map((user, idx) => {
         const { password, refreshToken, ...safeUser } = user;
         return (
           <motion.div
@@ -25,12 +24,11 @@ const Profile = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: idx * 0.1 }}
-            className="bg-white shadow-lg rounded-lg p-8 mb-6 w-full max-w-3xl"
+            className="rounded-2xl bg-white p-6 mb-6 border border-gray-100 shadow-lg w-full"
           >
-            {/* Header: avatar + basic info */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
-          <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-700 mr-4">
+          <div className="h-16 w-16 rounded-full bg-green-50 flex items-center justify-center text-2xl font-semibold text-green-700 mr-4">
             {(
               (safeUser.name || safeUser.firstName || safeUser.fullName)
                 ? String(safeUser.name || safeUser.firstName || safeUser.fullName)
@@ -62,7 +60,7 @@ const Profile = () => {
             </div>
 
             {/* Grid of nicely formatted fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               {Object.entries(safeUser).map(([key, value]) => {
           const formattedKey = key
             .replace(/([A-Z])/g, " $1")
@@ -92,7 +90,7 @@ const Profile = () => {
           }
 
           return (
-            <div key={key} className="flex flex-col bg-white p-3 rounded border">
+            <div key={key} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
               <div className="text-xs text-gray-500 mb-1">{formattedKey}</div>
               <div className="text-sm text-gray-900 break-words">{display}</div>
             </div>
@@ -101,16 +99,16 @@ const Profile = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end space-x-2">
+            <div className="flex items-center justify-end space-x-3">
               <button
           onClick={() => navigate("/settings")}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
               >
           Update Profile
               </button>
               <button
           onClick={() => navigator.clipboard?.writeText(JSON.stringify(safeUser, null, 2))}
-          className="px-4 py-2 border rounded text-sm text-gray-700 hover:bg-gray-50"
+          className="px-4 py-2 border border-gray-200 rounded-md text-sm text-gray-700 hover:bg-gray-50"
               >
           Copy JSON
               </button>
@@ -118,6 +116,7 @@ const Profile = () => {
           </motion.div>
         );
       })}
+      </main>
     </div>
   );
 };

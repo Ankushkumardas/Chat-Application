@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
+import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
   messages: [],
@@ -17,7 +18,7 @@ export const useChatStore = create((set, get) => ({
       toast.error("Error while getting users");
       console.log(error);
     } finally {
-      toast.success("All User fetched ");
+      // toast.success("All User fetched ");
       set({ isUserLoading: false });
     }
   },
@@ -26,7 +27,6 @@ export const useChatStore = create((set, get) => ({
     try {
       const { data } = await axiosInstance.get(`/message/${userid}`);
       console.log(data);
-      // backend returns { messages: [...], success: true }
       set({ messages: data.messages ?? [] });
     } catch (error) {
       console.log(error);
@@ -43,9 +43,15 @@ export const useChatStore = create((set, get) => ({
       return;
     }
     // backend expects { text, image }
-    const body = typeof messageData === "string" ? { text: messageData } : { text: messageData.message ?? messageData.text };
+    const body =
+      typeof messageData === "string"
+        ? { text: messageData }
+        : { text: messageData.message ?? messageData.text };
     try {
-      const res = await axiosInstance.post(`/message/send/${selectedUser._id}`, body);
+      const res = await axiosInstance.post(
+        `/message/send/${selectedUser._id}`,
+        body
+      );
       console.log(res.data, "message response");
       if (res.data?.message) {
         set({ messages: [...messages, res.data.message] });
@@ -57,5 +63,20 @@ export const useChatStore = create((set, get) => ({
       console.log("sendMessage error:", error);
       toast.error("Error sending message");
     }
+  },
+  //to update message in realtime--
+  subscribeMessageInRealTime: () => {
+    const socket = useAuthStore.getState().socket;
+    if (!socket) return;
+    socket.on("newMessage", (newmessage) => {
+      // Always store incoming messages so they are available when the user opens the conversation.
+      // Later we can move to per-conversation storage or track unread counts.
+      console.log("received newMessage via socket:", newmessage);
+      set({ messages: [...get().messages, newmessage] });
+    });
+  },
+  unsubcscribeMessage: () => {
+    const socket = useAuthStore.getState().socket;
+    socket.off("newMessage");
   },
 }));

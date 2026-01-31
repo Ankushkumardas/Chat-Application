@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Message from "../models/Message.js";
+import { getRecieverSocketId, io } from "../lib/socket.js";
 
 export const getallusers = async (req, res) => {
   const loggedinUser = req.user.id || req.user._id;
@@ -56,6 +57,12 @@ export const sendmessage = async (req, res) => {
       senderId: senderId,
       recieverId: recieverId,
     });
+
+    //logic to send mesaage and recieve mmesage in real time using socket.io
+    const recieverSocketId=getRecieverSocketId(recieverId);
+    if(recieverSocketId){
+      io.to(recieverSocketId).emit("newMessage",newmessage);
+    }
   } catch (error) {
     console.error("sendmessage error:", error);
     res.status(500).json({ message: "Internal server error" });
