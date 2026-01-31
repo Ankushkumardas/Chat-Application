@@ -9,6 +9,7 @@ export const useAuthStore = create((set, get) => ({
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
+  onlineUsers:[],
   checkAuth: async () => {
     const token = localStorage.getItem("token");
     if (!token) {

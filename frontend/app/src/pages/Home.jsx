@@ -69,18 +69,6 @@ const Home = () => {
               </motion.button>
             </div>
 
-            <div className="mt-8 text-sm text-gray-600">
-              {authUser ? (
-                <span>
-                  Signed in as{" "}
-                  <strong className="text-black">{authUser?.name}</strong>
-                </span>
-              ) : (
-                <span>
-                  Sign up to start private conversations and team channels.
-                </span>
-              )}
-            </div>
           </motion.div>
 
           <motion.div
