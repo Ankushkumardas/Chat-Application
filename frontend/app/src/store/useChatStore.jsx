@@ -72,7 +72,14 @@ export const useChatStore = create((set, get) => ({
       // Always store incoming messages so they are available when the user opens the conversation.
       // Later we can move to per-conversation storage or track unread counts.
       console.log("received newMessage via socket:", newmessage);
-      set({ messages: [...get().messages, newmessage] });
+      const { selectedUser, messages } = get();
+      // Only append the incoming message if it belongs to the currently selected conversation
+      if (selectedUser && newmessage.senderId === selectedUser._id) {
+        set({ messages: [...messages, newmessage] });
+      } else {
+        // Message is for another conversation. Ignore here (could track unread counts instead).
+        console.log('newMessage not for selected conversation; ignoring/storing elsewhere');
+      }
     });
   },
   unsubcscribeMessage: () => {
