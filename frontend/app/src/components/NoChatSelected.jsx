@@ -3,7 +3,7 @@ import { FaRegMessage } from 'react-icons/fa6'
 
 const NoChatSelected = () => {
   return (
-   <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100/50">
+  <div className="w-full flex flex-1 flex-col items-center justify-center p-8 bg-base-100/50">
       <div className="max-w-md text-center space-y-6">
         <div className="flex justify-center gap-4 mb-4">
           <div className="relative">
@@ -21,6 +21,17 @@ const NoChatSelected = () => {
         <p className="text-base-content/60">
           Select a conversation from the sidebar to start chatting
         </p>
+        <div className="md:hidden">
+          <button
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+            onClick={() => {
+              // emit a custom event to instruct parent to open the sidebar on mobile
+              window.dispatchEvent(new CustomEvent('openSidebar'));
+            }}
+          >
+            Open Chats
+          </button>
+        </div>
       </div>
     </div>
   )

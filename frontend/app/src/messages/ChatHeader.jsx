@@ -1,8 +1,9 @@
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { IoClose } from "react-icons/io5";
+import { FiMenu } from "react-icons/fi";
 
-const ChatHeader = () => {
+const ChatHeader = ({ onOpenSidebar }) => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
   const name = selectedUser?.name ?? "No user selected";
@@ -16,6 +17,14 @@ const ChatHeader = () => {
 return (
     <div className="flex items-center justify-between p-2">
         <div className="flex items-center gap-3">
+            {/* Mobile: show menu button to open sidebar */}
+            <button
+                onClick={onOpenSidebar}
+                className="md:hidden p-1 mr-1 rounded hover:bg-gray-100"
+                aria-label="Open chats"
+            >
+                <FiMenu size={20} />
+            </button>
             <div className="relative">
                 <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
                     {suffix}

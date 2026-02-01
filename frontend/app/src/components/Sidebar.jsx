@@ -22,7 +22,7 @@ function pickColor(idOrName) {
   return COLOR_CLASSES[Math.abs(hash) % COLOR_CLASSES.length];
 }
 
-const Sidebar = () => {
+const Sidebar = ({ mobileOpen, onClose }) => {
   const {
     getUsers,
     users,
@@ -70,8 +70,13 @@ const Sidebar = () => {
     );
   }
 
+  // On mobile we render as an overlay when `mobileOpen` is true, otherwise hide on small screens
+  const baseClasses = mobileOpen
+    ? "fixed inset-y-0 left-0 w-72 z-50 bg-white p-3 shadow-lg"
+    : "hidden md:block md:w-72 p-3";
+
   return (
-    <div className="h-full overflow-y-auto min-w-sm p-3">
+    <div className={`${baseClasses} h-full overflow-y-auto`}>
       <div className="text-sm font-semibold text-gray-700 mb-3">Chats</div>
     <div>
       {/* {onlineuserstoshow.map((data)=>{
@@ -101,7 +106,10 @@ const Sidebar = () => {
                   ? "bg-gray-200"
                   : "hover:bg-gray-100"
               }`}
-              onClick={() => setSelectedUser(data)}
+              onClick={() => {
+                setSelectedUser(data);
+                if (onClose) onClose();
+              }}
             >
               <div className="relative">
                 <div

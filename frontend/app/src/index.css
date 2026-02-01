@@ -3,3 +3,21 @@
 body {
   font-family: "Inter", sans-serif;
 }
+
+/* Slightly smaller global font for a more compact UI. Uses responsive
+   adjustments so mobile is a bit smaller than desktop. */
+html {
+  font-size: 14px; /* default (affects rem in Tailwind) */
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: 13px; /* smaller on small screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 15px; /* slightly larger on wide screens */
+  }
+}

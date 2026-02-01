@@ -4,26 +4,26 @@ import { useAuthStore } from "../store/useAuthStore";
 import ChatHeader from "../messages/ChatHeader";
 import MessageInput from "../messages/MessageInput";
 import { motion, AnimatePresence } from "framer-motion";
-const ChatContainer = () => {
+const ChatContainer = ({ onOpenSidebar, onCloseSidebar }) => {
   const {
     getMessages,
     messages = [],
     isMessageLoading,
     selectedUser,
     subscribeMessageInRealTime,
-    unsubcscribeMessage,
+    unsubscribeMessage,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messagesRef = useRef(null);
   useEffect(() => {
     if (selectedUser?._id) getMessages(selectedUser._id);
     subscribeMessageInRealTime();
-    //when cleanup to turn of teh socket for newMessage
-    return () => unsubcscribeMessage();
+    //when cleanup to turn of the socket for newMessage
+    return () => unsubscribeMessage();
   }, [
     selectedUser,
     getMessages,
-    unsubcscribeMessage,
+    unsubscribeMessage,
     subscribeMessageInRealTime,
   ]);
 
@@ -55,7 +55,7 @@ const ChatContainer = () => {
 
   return (
     <div className="flex-1 flex flex-col bg-white p-6 min-h-0 overflow-hidden">
-      <ChatHeader />
+      <ChatHeader onOpenSidebar={onOpenSidebar} />
 
       <div
         ref={messagesRef}
