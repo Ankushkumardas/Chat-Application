@@ -34,7 +34,13 @@ export const useChatStore = create((set, get) => ({
       set({ isMessageLoading: false });
     }
   },
-  setSelectedUser: (user) => set({ selectedUser: user }),
+  setSelectedUser: (user) => {
+    set({ selectedUser: user, messages: [] });
+    // load conversation messages for the selected user
+    if (user && user._id) {
+      get().getMessages(user._id);
+    }
+  },
   sendMessage: async (messageData) => {
     console.log("sendMessage payload:", messageData);
     const { selectedUser, messages } = get();
@@ -82,8 +88,9 @@ export const useChatStore = create((set, get) => ({
       }
     });
   },
-  unsubcscribeMessage: () => {
+  unsubscribeMessage: () => {
     const socket = useAuthStore.getState().socket;
+    if (!socket) return;
     socket.off("newMessage");
   },
 }));

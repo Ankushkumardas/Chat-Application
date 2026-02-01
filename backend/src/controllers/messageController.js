@@ -8,9 +8,8 @@ export const getallusers = async (req, res) => {
     const filteredusers = await User.find({
       _id: { $ne: loggedinUser },
     }).select("-password -refershToken");
-    res
-      .status(200)
-      .json({ message: "All other users", users: { filteredusers } });
+    // return users as an array (not wrapped in an object)
+    res.status(200).json({ message: "All other users", users: filteredusers });
   } catch (error) {
     res.status(500).json({ message: "Internel server error" });
   }
@@ -25,7 +24,8 @@ export const getallmessages = async (req, res) => {
         { senderId: senderId, recieverId: userchatid },
         { senderId: userchatid, recieverId: senderId },
       ],
-    }).sort({ created: 1 });
+    }).sort({ createdAt: 1 });
+    // console.log(`getallmessages: found ${messages.length} messages between ${senderId} and ${userchatid}`);
     res.status(200).json({
       messages: messages,
       success: true,
