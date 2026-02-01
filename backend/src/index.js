@@ -9,6 +9,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 import cors from "cors";
 import { app, server } from "./lib/socket.js";
 import path from 'path';
+import fs from 'fs';
 
 app.use(express.json());
 app.use(
@@ -28,16 +29,45 @@ app.use("/api/user", profileRoutes);
 app.use("/api/message", messageRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, 'frontend', 'app', 'dist')));
+  // Try a set of likely locations for the built frontend `dist` folder.
+  // Prefer candidates that actually contain an `index.html`.
+  const candidates = [
+    path.resolve(__dirname, 'frontend', 'app', 'dist'),
+    path.resolve(__dirname, '..', 'frontend', 'app', 'dist'),
+    path.resolve(__dirname, '..', '..', 'frontend', 'app', 'dist'),
+    path.resolve(process.cwd(), 'frontend', 'app', 'dist'),
+    path.resolve(process.cwd(), 'frontend', 'dist'),
+    path.resolve(process.cwd(), 'dist'),
+  ];
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'app', 'dist', 'index.html'));
-  });
+  const distPath = candidates.find((p) => fs.existsSync(path.join(p, 'index.html')) || fs.existsSync(p));
+
+  if (distPath) {
+    console.log('Serving frontend from:', distPath);
+    app.use(express.static(distPath));
+
+    app.get('*', (req, res) => {
+      const indexFile = path.join(distPath, 'index.html');
+      if (fs.existsSync(indexFile)) return res.sendFile(indexFile);
+      // Fallback: send any existing file or a small message.
+      return res.status(404).send('index.html not found in frontend dist');
+    });
+  } else {
+    console.warn('Frontend `dist` folder not found. Looked in:');
+    candidates.forEach((c) => console.warn(' -', c));
+
+    // If the frontend/app folder exists, list its contents to help debugging.
+    try {
+      const fa = path.resolve(process.cwd(), 'frontend', 'app');
+      if (fs.existsSync(fa)) {
+        const list = fs.readdirSync(fa);
+        console.warn('Contents of `frontend/app` (process.cwd):', fa, list);
+      }
+    } catch (err) {
+      console.warn('Error while listing frontend/app contents:', err && err.message);
+    }
+  }
 }
-
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "../frontend/app/dist")));
-// }
 
 server.listen(process.env.PORT, () => {
   console.log("Server started at port", process.env.PORT);
